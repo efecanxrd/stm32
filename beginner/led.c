@@ -17,13 +17,19 @@ int main(void)
 	*pClkCtrlReg = *pClkCtrlReg | 0x08;
 	*/
 
-	*pClkCtrlreg |= 0x08; //shorter
-
+	//*pClkCtrlreg |= 0x08; //shorter
+	*pClkCtrlreg |= (1 << 3); //simplier w/bitwise shift operators
+		
 	//2. Configure the mode of the IO pin as output
-	*pPortDModeReg &= 0xFCFFFFFF; //CLEAR 24th and 25th bit positions
-	*pPortDModeReg |= 0x01000000; //make the 24th bit as 1 (SET)
+	//*pPortDModeReg &= 0xFCFFFFFF; //CLEAR 24th and 25th bit positions
+	*pPortDModeReg &= ~(1<<24);
+	*pPortDModeReg &= ~(1<<25);
 
-	*pPortDOutReg |= 0x1000; //SET 12th bit of the output data register to make I/O pin 12 high
+	//*pPortDModeReg |= 0x01000000; //make the 24th bit as 1 (SET)
+	*pPortDModeReg |= (1<<24);
+	
+	//*pPortDOutReg |= 0x1000; //SET 12th bit of the output data register to make I/O pin 12 high
+	*pPortDOutReg |= (1<<12);
 
 	while(1);
 
