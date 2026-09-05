@@ -13,11 +13,13 @@ int main(void)
 
 	//3. Lets force the processor to execute some undefined instruction
 	uint32_t *pSRAM = (uint32_t*) 0x20010000;
-	*pSRAM = 0xFFFFFFFF;
+	*pSRAM = 0xFFFFFFFF; //writing to the address. 0xFFFFFFFF is an invalid/unallocated opcode
 
 	void (*some_address) (void);
-	some_address = (void*)0x20010001;
+	some_address = (void*)0x20010001;   
 	some_address();
+	/* It casts the address to a function pointer with bit 0 set (0x20010001). In ARM Cortex-M, bit 0 indicates Thumb state execution; 
+	setting it ensures the CPU doesn't trigger an immediate INVSTATE fault on branch.*/
 
 	for(;;);
 }
