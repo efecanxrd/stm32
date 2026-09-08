@@ -1,0 +1,9 @@
+CC=arm-none-eabi-gcc
+MACH=cortex-m4
+CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -O0
+
+main.o:main.c
+  $(CC) $(CFLAGS) $^ -o $@
+
+#You can use $^ for main.c (which denotes dependency) and $@ for target (which denotes target)
+
