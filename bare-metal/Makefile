@@ -1,9 +1,21 @@
 CC=arm-none-eabi-gcc
 MACH=cortex-m4
-CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -O0
+CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -Wall -O0 -g
+LDFLAGS= -nostdlib -T stm32_ls.ld -Wl,-Map=final.map 
+
+all: final.elf
 
 main.o:main.c
-  $(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) -o $@ $^
+	
+stm32_startup.o:stm32_startup.c
+	$(CC) $(CFLAGS) -o $@ $^
+	
+final.elf: main.o stm32_startup.o
+	$(CC) $(LDFLAGS) -o $@ $^
 
-#You can use $^ for main.c (which denotes dependency) and $@ for target (which denotes target)
-
+clean:
+	rm -rf *.o *.elf
+	
+load:
+	openocd -f board/stm32f4discovery.cfg

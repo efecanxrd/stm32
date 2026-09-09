@@ -1,0 +1,43 @@
+arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb main.c -o main.o
+arm-none-eabi-gcc -nostdlib *.o -T stm32_ls.ld -o final.elf
+
+make load
+
+arm-none-eabi-gdb.exe
+to start
+
+target remote localhost:3333
+You connect to OpenOCD server via the port 3333
+
+monitor reset init
+This will execute some scripts.
+
+monitor flash write_image erase final.elf
+Load executable to the target
+
+monitor reset halt
+It will reset the MCU, but it will immediately halt it, code will not be executed.
+
+monitor resume
+Resume the program
+
+monitor halt
+Halt the program
+
+monitor reset
+Reset
+
+c continue: go to next breakpoint
+n next: 		next line/no inside the function calls
+s step: 		next line/w calls
+ni (nexti):	continues only one assembly code next
+finish:		runs until the func ends.
+
+b <func/line>:	Puts a breakpoint within input: b main.c:25
+b <address>:		Puts a breakpoint within that address: b *0x0800018c
+d <id>:			Removes breakpoint
+
+watch *<address>: Watches the address and stops the running when change
+
+monitor mdw <address> [count]: Memory Display Word
+monitor mww <address> <value>: Memory write word
