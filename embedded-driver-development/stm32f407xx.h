@@ -62,8 +62,7 @@ typedef struct {
     volatile uint32_t PUPDR;    /*!< GPIO port pull-up/pull-down register, 0x0C */
     volatile uint32_t IDR;      /*!< GPIO port input data register, 0x10 */
     volatile uint32_t ODR;      /*!< GPIO port output data register, 0x14 */
-    volatile uint16_t BSRRL;    /*!< GPIO port bit set/reset low register, 0x18 */
-    volatile uint16_t BSRRH;    /*!< GPIO port bit set/reset high register, 0x1A */
+    volatile uint32_t BSRR;     /*!< Bit set: bits [15:0], Bit reset: bits [31:16], 0x18 */
     volatile uint32_t LCKR;     /*!< GPIO port configuration lock register, 0x1C */
     volatile uint32_t AFR[2];   /*!< GPIO alternate function low (0x20) and high (0x24) registers */
 } GPIO_RegDef_t;
@@ -215,15 +214,16 @@ typedef struct {
 /*
 	Clock reset macros for GPIOx peripherals
 */
-#define GPIOA_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 0))	(RCC->AHB1RSTR &= ~(1 << 0)); } while(0)
-#define GPIOB_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 1))	(RCC->AHB1RSTR &= ~(1 << 1)); } while(0)
-#define GPIOC_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 2))	(RCC->AHB1RSTR &= ~(1 << 2)); } while(0)
-#define GPIOD_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 3))	(RCC->AHB1RSTR &= ~(1 << 3)); } while(0)
-#define GPIOE_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 4))	(RCC->AHB1RSTR &= ~(1 << 4)); } while(0)
-#define GPIOF_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 5))	(RCC->AHB1RSTR &= ~(1 << 5)); } while(0)
-#define GPIOG_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 6))	(RCC->AHB1RSTR &= ~(1 << 6)); } while(0)
-#define GPIOH_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 7))	(RCC->AHB1RSTR &= ~(1 << 7)); } while(0)
-#define GPIOI_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 8))	(RCC->AHB1RSTR &= ~(1 << 8)); } while(0)
+#define GPIOA_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 0));	(RCC->AHB1RSTR &= ~(1 << 0)); } while(0)
+#define GPIOB_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 1));	(RCC->AHB1RSTR &= ~(1 << 1)); } while(0)
+#define GPIOC_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 2));	(RCC->AHB1RSTR &= ~(1 << 2)); } while(0)
+#define GPIOD_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 3));	(RCC->AHB1RSTR &= ~(1 << 3)); } while(0)
+#define GPIOE_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 4));	(RCC->AHB1RSTR &= ~(1 << 4)); } while(0)
+#define GPIOF_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 5));	(RCC->AHB1RSTR &= ~(1 << 5)); } while(0)
+#define GPIOG_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 6));	(RCC->AHB1RSTR &= ~(1 << 6)); } while(0)
+#define GPIOH_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 7));	(RCC->AHB1RSTR &= ~(1 << 7)); } while(0)
+#define GPIOI_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 8));	(RCC->AHB1RSTR &= ~(1 << 8)); } while(0)
 
 
 #endif /* INC_STM32F407XX_H_ */
+
