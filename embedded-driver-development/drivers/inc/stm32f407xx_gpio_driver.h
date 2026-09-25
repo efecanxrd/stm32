@@ -87,8 +87,9 @@ void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t val
 void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t value);
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
-//IRQ Configuration and Handling
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t status);
+//IRQ Configuration and ISR Handling
+void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t status);
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void GPIO_IRQHandling(uint8_t PinNumber);
 
 
