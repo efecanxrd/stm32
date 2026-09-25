@@ -1,7 +1,22 @@
-#include <stdint.h>
-
 #ifndef INC_STM32F407XX_H_
 #define INC_STM32F407XX_H_
+#include <stdint.h>
+
+//ARM Cortex Mx Processor NVIC ISERx register addresses
+#define NVIC_ISER0			((volatile uint32_t*) 0xE000E100)
+#define NVIC_ISER1			((volatile uint32_t*) 0xE000E104)
+#define NVIC_ISER2			((volatile uint32_t*) 0xE000E108)
+#define NVIC_ISER3			((volatile uint32_t*) 0xE000E10C)
+
+//ARM Cortex Mx Processor NVIC ICERx register addresses
+#define NVIC_ICER0			((volatile uint32_t*) 0xE000E180)
+#define NVIC_ICER1			((volatile uint32_t*) 0xE000E184)
+#define NVIC_ICER2			((volatile uint32_t*) 0xE000E188)
+#define NVIC_ICER3			((volatile uint32_t*) 0xE000E18C)
+
+#define NVIC_PR_BASE_ADDR	((volatile uint32_t*) 0xE0000E400)
+
+#define NO_PR_BITS_IMPLEMENTED	4
 
 /*
 	Base addresses of Flash and SRAM memories
@@ -9,7 +24,7 @@
 
 #define FLASH_BASEADDR		0x08000000U
 #define SRAM1_BASEADDR		0x20000000U
-#define SRAM2_BASEADDR 0x2001C000U
+#define SRAM2_BASEADDR 		0x2001C000U
 #define ROM_BASEADDR			0x1FFF0000U
 #define SRAM 				SRAM1_BASEADDR
 
@@ -39,8 +54,10 @@
 #define I2C1_BASEADDR		0x40005400U
 #define I2C2_BASEADDR		0x40005800U
 #define I2C3_BASEADDR		0x40005C00U
+
 #define SPI2_BASEADDR		0x40003800U
 #define	SPI3_BASEADDR		0x40003C00U
+
 #define	USART2_BASEADDR		0x40004400U
 #define	USART3_BASEADDR		0x40004800U
 #define UART4_BASEADDR		0x40004C00U
@@ -100,6 +117,48 @@ typedef struct {
 	volatile uint32_t PLLI2SCFGR;    /*!< RCC PLLI2S configuration register, 0x84 */
 } RCC_RegDef_t;
 
+
+// Peripheral register definition structure for EXTI
+typedef struct {
+	volatile uint32_t IMR;           /*!< EXTI Interrupt mask register,                    Address offset: 0x00 */
+	volatile uint32_t EMR;           /*!< EXTI Event mask register,                        Address offset: 0x04 */
+	volatile uint32_t RTSR;          /*!< EXTI Rising trigger selection register,          Address offset: 0x08 */
+	volatile uint32_t FTSR;          /*!< EXTI Falling trigger selection register,         Address offset: 0x0C */
+	volatile uint32_t SWIER;         /*!< EXTI Software interrupt event register,          Address offset: 0x10 */
+	volatile uint32_t PR;            /*!< EXTI Pending register,                           Address offset: 0x14 */
+} EXTI_RegDef_t;
+
+// Peripheral register definition structure for SYSCFG
+typedef struct {
+	volatile uint32_t MEMRMP;        /*!< SYSCFG memory remap register,                    Address offset: 0x00 */
+	volatile uint32_t PMC;           /*!< SYSCFG peripheral mode configuration register,   Address offset: 0x04 */
+	volatile uint32_t EXTICR[4];     /*!< SYSCFG external interrupt configuration 1-4,     Address offset: 0x08-0x14 */
+	volatile uint32_t RESERVED_1[2]; /*!< Reserved,                                        Address offset: 0x18-0x1C */
+	volatile uint32_t CMPCR;         /*!< SYSCFG Compensation cell control register,       Address offset: 0x20 */
+	volatile uint32_t RESERVED_2[2]; /*!< Reserved,                                        Address offset: 0x24-0x28 */
+	volatile uint32_t CFGR;          /*!< SYSCFG configuration register,                   Address offset: 0x2C */
+} SYSCFG_RegDef_t;
+
+
+/*
+ Peripheral register definition structure for SPI
+ */
+typedef struct {
+	volatile uint32_t CR1;
+	volatile uint32_t CR2;
+	volatile uint32_t SR;
+	volatile uint32_t DR;
+	volatile uint32_t CRCPR;
+	volatile uint32_t RXCRCR;
+	volatile uint32_t TXCRCR;
+	volatile uint32_t I2SCFGR;
+	volatile uint32_t I2SPR;
+} SPI_RegDef_t;
+
+
+
+
+//Peripheral definitions
 #define GPIOA ((GPIO_RegDef_t*)GPIOA_BASEADDR)
 #define GPIOB ((GPIO_RegDef_t*)GPIOB_BASEADDR)
 #define GPIOC ((GPIO_RegDef_t*)GPIOC_BASEADDR)
@@ -111,6 +170,12 @@ typedef struct {
 #define GPIOI ((GPIO_RegDef_t*)GPIOI_BASEADDR)
 
 #define RCC	  ((RCC_RegDef_t*)RCC_BASEADDR)
+#define EXTI	  ((EXTI_RegDef_t*)EXTI_BASEADDR)
+#define SYSCFG ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)
+
+#define SPI1		((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2		((SPI_RegDef_t*)SPI2_BASEADDR)
+#define SPI3		((SPI_RegDef_t*)SPI3_BASEADDR)
 
 
 /*
@@ -141,6 +206,7 @@ typedef struct {
 #define SPI1_PCLK_EN()	(RCC->APB2ENR |= (1 << 12))
 #define SPI2_PCLK_EN()	(RCC->APB1ENR |= (1 << 14))
 #define SPI3_PCLK_EN()	(RCC->APB1ENR |= (1 << 15))
+#define SPI4_PCLK_EN()	(RCC->APB1ENR |= (1 << 13))
 
 /*
 	Clock Enable Macros for USARTx Peripherals
@@ -209,6 +275,74 @@ typedef struct {
 #define RESET			DISABLE
 #define GPIO_PIN_SET		SET
 #define GPIO_PIN_RESET	RESET
+#define FLAG_RESET		RESET
+#define FLAG_SET			SET
+
+#define GPIO_BASEADDR_TO_CODE(x)		((x == GPIOA) ? 0 :\
+									(x == GPIOB) ? 1 :\
+									(x == GPIOC) ? 2 :\
+									(x == GPIOD) ? 3 :\
+									(x == GPIOE) ? 4 :\
+									(x == GPIOF) ? 5 :\
+									(x == GPIOG) ? 6 :\
+									(x == GPIOH) ? 7 :\
+									(x == GPIOI) ? 8:0 )
+
+//IRQ Numbers of STM32F407X MCU
+#define IRQ_NO_EXTIO			6
+#define IRQ_NO_EXTI1			7
+#define IRQ_NO_EXTI2			8
+#define IRQ_NO_EXTI3			9
+#define IRQ_NO_EXTI4			10
+#define IRQ_NO_EXTI9_5		23
+#define IRQ_NO_EXTI15_10		40
+
+#define NVIC_IRQ_PRI0		0
+#define NVIC_IRQ_PRI15		15
+
+
+/*
+ * Bit position definitions SPI_CR1
+ */
+#define SPI_CR1_CPHA        0
+#define SPI_CR1_CPOL        1
+#define SPI_CR1_MSTR        2
+#define SPI_CR1_BR          3
+#define SPI_CR1_SPE         6
+#define SPI_CR1_LSBFIRST    7
+#define SPI_CR1_SSI         8
+#define SPI_CR1_SSM         9
+#define SPI_CR1_RXONLY      10
+#define SPI_CR1_DFF         11
+#define SPI_CR1_CRCNEXT     12
+#define SPI_CR1_CRCEN       13
+#define SPI_CR1_BIDIOE      14
+#define SPI_CR1_BIDIMODE    15
+
+/*
+ * Bit position definitions SPI_CR2
+ */
+#define SPI_CR2_RXDMAEN     0
+#define SPI_CR2_TXDMAEN     1
+#define SPI_CR2_SSOE        2
+#define SPI_CR2_FRF         4
+#define SPI_CR2_ERRIE       5
+#define SPI_CR2_RXNEIE      6
+#define SPI_CR2_TXEIE       7
+
+/*
+ * Bit position definitions SPI_SR
+ */
+#define SPI_SR_RXNE         0
+#define SPI_SR_TXE          1
+#define SPI_SR_CHSIDE       2
+#define SPI_SR_UDR          3
+#define SPI_SR_CRCERR       4
+#define SPI_SR_MODF         5
+#define SPI_SR_OVR          6
+#define SPI_SR_BSY          7
+#define SPI_SR_FRE          8
+
 
 
 /*
@@ -224,7 +358,38 @@ typedef struct {
 #define GPIOH_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 7));	(RCC->AHB1RSTR &= ~(1 << 7)); } while(0)
 #define GPIOI_REG_RESET()	do { (RCC->AHB1RSTR |= (1 << 8));	(RCC->AHB1RSTR &= ~(1 << 8)); } while(0)
 
+
+
 #include "stm32f407xx_gpio_driver.h"
+#include "stm32f407xx_spi_driver.h"
+
 
 #endif /* INC_STM32F407XX_H_ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
